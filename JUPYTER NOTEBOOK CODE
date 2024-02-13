@@ -1,0 +1,39 @@
+import pandas as pd
+import numpy as np
+from sklearn import preprocessing
+from sklearn.tree import DecisionTreeRegressor
+from sklearn import preprocessing
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, mean_squared_error
+df = pd.read_csv("soil-moisture.csv")
+label_encoder = preprocessing.LabelEncoder()
+# transform data
+# Encode labels in column 'species'.
+df['Month']= label_encoder.fit_transform(df['Month'])
+df['Month'].unique()
+x =
+df.drop(columns=['avg_pm1','avg_pm2','avg_pm3','avg_am','avg_lum','avg_te
+mp','avg_humd','avg_pres','avg_sm'])
+y=
+df[['avg_pm1','avg_pm2','avg_pm3','avg_am','avg_lum','avg_temp','avg_hum
+d','avg_pres','avg_sm']]
+model = DecisionTreeRegressor()
+predictions = []
+actual = []
+models = []
+scalers=[]
+for i in range(len(y.columns)):
+ scaler = MinMaxScaler()
+ Y = np.array(y.iloc[:,i]).reshape(-1, 1)
+ Y = scaler.fit_transform(Y)
+ x_train,x_test,y_train,y_test = train_test_split(x,Y, test_size=0.2)
+ t = model.fit(x_train, y_train)
+ models.append(t)
+ scalers.append(scaler)
+ prediction = model.predict(x_test)
+ predictions.append(prediction)
+ actual.append(np.array(y_test))
+for i in range(len(y.columns)):
+ print(mean_squared_error(actual[i], predictions[i]))
+print(scalers)
